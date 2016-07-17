@@ -7,8 +7,23 @@ namespace Types1
 {
 	struct InfoData
 	{
-		public string FirstName { get; set; }
-		public string LastName { get; set; }
+		public Int32 Id { get; set; }
+		public String FirstName { get; set; }
+		public String LastName { get; set; }
+
+		public override Int32 GetHashCode()
+		{
+			return Id.GetHashCode();
+		}
+
+		public override Boolean Equals(object obj)
+		{
+			if (obj is InfoData)
+			{
+				return this.Id == ((InfoData)obj).Id;
+			}
+			return false;
+		}
 	}
 
 	class Source
