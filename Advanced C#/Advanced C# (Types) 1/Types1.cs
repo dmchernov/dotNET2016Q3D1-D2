@@ -5,7 +5,13 @@ using System;
 
 namespace Types1
 {
-	struct InfoData
+	interface IInfoData
+	{
+		String FirstName { get; set; }
+		String LastName { get; set; }
+	}
+
+	struct InfoData : IInfoData
 	{
 		public Int32 Id { get; set; }
 		public String FirstName { get; set; }
@@ -39,7 +45,7 @@ namespace Types1
 
 	class Destination
 	{
-		internal void ProceedData<T>(List<T> data) where T : struct
+		internal void ProceedData<T>(List<T> data) where T : IInfoData
 		{
 			foreach (var item in data)
 			{
