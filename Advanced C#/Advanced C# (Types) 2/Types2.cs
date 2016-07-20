@@ -12,7 +12,7 @@ namespace Types2
 		public Int32 Id { get; set; }
 		public String Name { get; set; }
 		public Decimal Price { get; set; }
-		public UInt32 Count { get; set; }
+		public Decimal Count { get; set; }
 
 		public override Boolean Equals(object obj)
 		{
