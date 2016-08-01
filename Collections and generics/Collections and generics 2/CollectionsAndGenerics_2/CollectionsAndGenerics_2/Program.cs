@@ -14,4 +14,23 @@ namespace CollectionsAndGenerics_2
 		{
 		}
 	}
+
+	class MyCollection<T>
+	{
+		private IList<T> _collection;
+
+		public MyCollection(IList<T> collection)
+		{
+			_collection = collection;
+		}
+
+		public new int Equals(object o)
+		{
+			foreach (var item in _collection)
+			{
+				if (item.Equals(o)) return _collection.IndexOf(item);
+			}
+			return -1;
+		}
+	}
 }
