@@ -13,7 +13,7 @@ namespace CollectionsAndGenerics_3
 	{
 		static void Main(string[] args)
 		{
-			MyCollection mc = new MyCollection();
+			MyCollection mc = new MyCollection(new int[] {1,2,3,4,5,6,7,8,9,-4,8,4,7,-5});
 
 			foreach (int digit in mc)
 			{
@@ -29,15 +29,11 @@ namespace CollectionsAndGenerics_3
 
 	class MyCollection : IEnumerable
 	{
-		private int[] _digits = new int[100];
-		private Random rnd = new Random();
+		private int[] _digits;
 
-		public MyCollection()
+		public MyCollection(int[] digits)
 		{
-			for (var i = 0; i < _digits.Length; i++)
-			{
-				_digits[i] = rnd.Next(Int32.MinValue, Int32.MaxValue);
-			}
+			_digits = digits;
 		}
 
 		public IEnumerator GetEnumerator()
