@@ -13,9 +13,9 @@ namespace CollectionsAndGenerics_3
 	{
 		static void Main(string[] args)
 		{
-			MyCollection mc = new MyCollection(new int[] {1,2,3,4,5,6,7,8,9,-4,8,4,7,-5});
+			MyCollection.Digits = new int[] {1,2,3,4,5,6,7,8,9,-4,8,4,7,-5};
 
-			foreach (int digit in mc)
+			foreach (int digit in MyCollection.Digits)
 			{
 				if (digit > 0)
 					Console.WriteLine(digit);
@@ -29,18 +29,13 @@ namespace CollectionsAndGenerics_3
 
 	class MyCollection : IEnumerable
 	{
-		private int[] _digits;
-
-		public MyCollection(int[] digits)
-		{
-			_digits = digits;
-		}
+		public static int[] Digits { get; set; }
 
 		public IEnumerator GetEnumerator()
 		{
-			for (int i = 0; i < _digits.Length; i++)
+			for (int i = 0; i < Digits.Length; i++)
 			{
-				yield return _digits[i];
+				yield return Digits[i];
 			}
 		}
 	}
