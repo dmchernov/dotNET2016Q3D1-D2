@@ -13,9 +13,15 @@ namespace CollectionsAndGenerics_3
 	{
 		static void Main(string[] args)
 		{
-			MyCollection.Digits = new int[] {1,2,3,4,5,6,7,8,9,-4,8,4,7,-5};
+			MyCollection mc = new MyCollection();
+			Random rnd = new Random();
 
-			foreach (int digit in MyCollection.Digits)
+			for (int i = 0; i < 100; i++)
+			{
+				mc[i] = rnd.Next(-100000000, Int32.MaxValue);
+			}
+
+			foreach (int digit in mc)
 			{
 				if (digit > 0)
 					Console.WriteLine(digit);
@@ -27,16 +33,26 @@ namespace CollectionsAndGenerics_3
 		}
 	}
 
-	class MyCollection : IEnumerable
+	class MyCollection : IEnumerable<int>
 	{
-		public static int[] Digits { get; set; }
+		private int[] _digits = new int[100];
 
-		public IEnumerator GetEnumerator()
+		public int this[int i]
 		{
-			for (int i = 0; i < Digits.Length; i++)
+			get { return _digits[i]; }
+			set { _digits[i] = value; }
+		}
+		public IEnumerator<int> GetEnumerator()
+		{
+			for (int i = 0; i < _digits.Length; i++)
 			{
-				yield return Digits[i];
+				yield return _digits[i];
 			}
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return _digits.GetEnumerator();
 		}
 	}
 }
