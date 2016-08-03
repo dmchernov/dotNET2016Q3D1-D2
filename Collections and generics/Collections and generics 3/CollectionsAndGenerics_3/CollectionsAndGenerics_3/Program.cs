@@ -36,22 +36,12 @@ namespace CollectionsAndGenerics_3
 	{
 		private List<int> _digits = new List<int>();
 
-		public MyCollection()
-		{
-			_digits.Add(0);
-		}
-
 		public int this[int i]
 		{
 			get { return _digits[i]; }
 			set
 			{
-				var index = i;
-				while (index >= _digits.Count)
-				{
-					_digits.Add(0);
-				}
-				_digits[i] = value;
+				_digits.Insert(i, value);
 			}
 		}
 		public IEnumerator<int> GetEnumerator()
@@ -61,7 +51,7 @@ namespace CollectionsAndGenerics_3
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return _digits.GetEnumerator();
+			return this.GetEnumerator();
 		}
 	}
 }
