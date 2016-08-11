@@ -22,7 +22,7 @@ namespace StringConcat
 		public static String CustomConcat(this String[] strings)
 		{
 			StringBuilder sb = new StringBuilder();
-			for (int i = 1; i < strings.Length - 1; i = i + 2)
+			for (int i = 1; i < strings.Length; i = i + 2)
 			{
 				sb.Append(strings[i]); //Для конкатенации выбран класс StringBuilder с целью минимизировать издержки памяти
 				sb.Append(' ');		   //и увеличить быстродействие кода.
