@@ -5,7 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NullableUsing
@@ -14,6 +16,35 @@ namespace NullableUsing
 	{
 		static void Main(string[] args)
 		{
+			Example e = new Example();
+			Thread t= new Thread(e.Process);
+			//e.Process();
+			t.Start();
+			Thread.Sleep(1000);
+			while (!e.Info.IsEnded())
+			{
+				Console.WriteLine("Процесс не завершен");
+				Thread.Sleep(1200);
+			}
+		}
+	}
+
+	class Example
+	{
+		public ProcessInfo Info;
+		public void Process()
+		{
+			var arr = new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+			Info = new ProcessInfo("Перебор массива");
+			Console.WriteLine("Начало процесса: {0:G}\nОписание процесса: {1}", Info.StartDate, Info.Data);
+			for (int i = 0; i < arr.Length; i++)
+			{
+				Console.WriteLine(i);
+				Thread.Sleep(500);
+			}
+			Info.EndDate = DateTime.Now;
+			Console.WriteLine("Процесс завершен {0:G}", Info.EndDate);
+			Console.ReadKey();
 		}
 	}
 
@@ -29,7 +60,6 @@ namespace NullableUsing
 		public ProcessInfo(String data)
 		{
 			StartDate = DateTime.Now;
-			EndDate = null;
 			Data = data;
 		}
 
