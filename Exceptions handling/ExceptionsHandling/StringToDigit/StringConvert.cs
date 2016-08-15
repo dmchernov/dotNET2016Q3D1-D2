@@ -20,11 +20,15 @@ namespace StringToDigit
 			}
 			catch (FormatException ex)
 			{
-				throw new InvalidOperationException("Невозможно преобразовать строку в число", ex);
+				throw new InvalidOperationException($"Невозможно выполнить операцию преобразования строки {str} в число", ex);
 			}
 			catch (OverflowException ex)
 			{
-				throw new OverflowException("Число выходит за рамки диапазона Int32", ex);
+				throw new OverflowException($"Число {str} выходит за рамки диапазона Int32", ex);
+			}
+			catch
+			{
+				throw;
 			}
 			return result;
 		}

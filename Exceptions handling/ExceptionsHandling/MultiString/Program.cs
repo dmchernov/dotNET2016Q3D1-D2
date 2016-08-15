@@ -13,14 +13,62 @@ namespace MultiString
 	{
 		static void Main(string[] args)
 		{
-			InputWithEmptyStringsAndExceptionHandling();
-			InputWithoutEmptyStrings();
-			InputWithEmptyStrings();
+			while (true)
+			{
+				Console.WriteLine("Меню:\n" +
+								  "1: Вывести первые символы введенных строк;\n" +
+								  "2: Конвертировать строку в число\n" +
+								  "Any key: Выход из приложения");
+				var input = Console.ReadLine();
+				if (input == "1")
+					InputWithEmptyStrings();
+				else if (input == "2")
+					ConvertString();
+				else
+					break;
 
-			//StringToDigit Call
+				Console.WriteLine("Нажмите любую клавишу для возврата в меню");
+				Console.ReadKey();
+				Console.Clear();
+			}
+		}
+
+		static void InputWithEmptyStrings()
+		{
+			Console.WriteLine("Введите несколько строк. Для окончании ввода наберите \"ok\"");
+			List<String> _strings = new List<string>();
+
+			while (true)
+			{
+				var s = Console.ReadLine().Trim();
+				if (s == "ok") break; else _strings.Add(s);
+			}
+			if(-_strings.Count > 0)
+				Console.WriteLine("\nПервые символы введенных строк:");
+
 			try
 			{
-				Console.WriteLine("Ведите число для преобразования");
+				foreach (var str in _strings)
+				{
+					if (!String.IsNullOrEmpty(str))
+						Console.WriteLine(str[0]);
+					else
+						Console.WriteLine("Была введена пустая строка");
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+			}
+			
+		}
+
+		static void ConvertString()
+		{
+			Console.WriteLine("Ведите число для преобразования");
+
+			try
+			{
 				var digit = StringConvert.ToDigit(Console.ReadLine());
 				Console.WriteLine($"Строка успешно преобразована в число {digit}");
 			}
@@ -33,76 +81,6 @@ namespace MultiString
 				Console.WriteLine(ex.Message);
 				Console.WriteLine($"Ошибка возникла в сборке {ex.Source}, метод {ex.TargetSite}");
 			}
-
-			Console.ReadKey(true);
-		}
-
-		//Этот метод позволяет добавлять в коллекцию пустые строки (пробелы отбрасываются) и использует механизм обработки исключений
-		static void InputWithEmptyStringsAndExceptionHandling()
-		{
-			Console.WriteLine("Этот метод позволяет добавлять в коллекцию пустые строки (пробелы отбрасываются) и использует механизм обработки исключений");
-			List<String> strings = new List<string>();
-
-			while (true)
-			{
-				var s = Console.ReadLine().Trim();
-				if (s == "exit") break; else strings.Add(s);
-			}
-
-			Console.WriteLine("\nПервые символы введенных строк:");
-			try
-			{
-				foreach (var str in strings)
-				{
-					Console.WriteLine(str[0]);
-				}
-			}
-			catch (IndexOutOfRangeException ex)
-			{
-				Console.WriteLine(ex.Message);
-			}
-		}
-
-		//Этот метод пропускает пустые строки (пробелы отбрасываются)
-		static void InputWithoutEmptyStrings()
-		{
-			Console.WriteLine("Этот метод пропускает пустые строки (пробелы отбрасываются)");
-
-			List<String> strings = new List<string>();
-
-			while (true)
-			{
-				var s = Console.ReadLine().Trim();
-				if (s == "exit") break;
-				else if(s == String.Empty) continue;
-				else strings.Add(s);
-			}
-
-			Console.WriteLine("\nПервые символы введенных строк:");
-			foreach (var str in strings)
-				{
-					Console.WriteLine(str[0]);
-				}
-		}
-
-		//Этот метод позволяет добавлять в коллекцию пустые строки (пробелы отбрасываются) и проверяет строки на корректность при итерации
-		static void InputWithEmptyStrings()
-		{
-			Console.WriteLine("Этот метод позволяет добавлять в коллекцию пустые строки (пробелы отбрасываются) и проверяет строки на корректность при итерации");
-			List<String> _strings = new List<string>();
-
-			while (true)
-			{
-				var s = Console.ReadLine().Trim();
-				if (s == "exit") break; else _strings.Add(s);
-			}
-
-			Console.WriteLine("\nПервые символы введенных строк:");
-			foreach (var str in _strings)
-				{
-					if(!String.IsNullOrEmpty(str))
-						Console.WriteLine(str[0]);
-				}
 		}
 	}
 }
