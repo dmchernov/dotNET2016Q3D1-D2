@@ -69,13 +69,13 @@ namespace SampleQueries
 
 		public void Linq001()
 		{
-			var totals = new Decimal[] {30000.0M, 40000.0M, 100000.0M};
+			var totals = new Decimal[] {30000M, 40000M, 100000M};
 
 			foreach (var t in totals)
 			{
 				var clients = dataSource.Customers.Where(c => c.Orders.Sum(o => o.Total) > t);
 
-				Console.WriteLine($"Суммарный оборот превышает {t}:");
+				Console.WriteLine($"Суммарный оборот превышает {t:C}:");
 
 				foreach (var c in clients)
 				{
@@ -85,6 +85,9 @@ namespace SampleQueries
 				Console.WriteLine($"\nВсего клиентов: {clients.Count()}");
 				Console.WriteLine(@"-------------------------------------");
 			}
+
+			Console.WriteLine();
+			ObjectDumper.Write(dataSource.Customers.OrderByDescending(c => c.Orders.Sum(o => o.Total)).Select(c=> new {c.CustomerID, Sum = c.Orders.Sum(o => o.Total)}));
 		}
 
 		[Category("LINQ Tasks")]
@@ -127,7 +130,7 @@ namespace SampleQueries
 			{
 				foreach (var s in r.suppliers)
 				{
-					Console.WriteLine("{0, -10}{1, -10}{2, -30}", r.Country, r.City, r.CustomerID, s);
+					Console.WriteLine("{0, -10}{1, -10}{2, -10}{3}", r.Country, r.City, r.CustomerID, s);
 				}
 			}
 
@@ -149,6 +152,21 @@ namespace SampleQueries
 				
 				
 			}
+			Console.WriteLine();
+			Console.WriteLine(@"Customers--------------------------------------------------------------------");
+
+			foreach (var customer in dataSource.Customers.Select(c => new { Name = c.CustomerID, Country = c.Country, City = c.City }).OrderBy(c => c.Country).ThenBy(c => c.City))
+			{
+				Console.WriteLine($"{customer.Name, -10}{customer.Country, -15}{customer.City}");
+			}
+			Console.WriteLine(@"Suppliers--------------------------------------------------------------------");
+
+			foreach (var supplier in dataSource.Suppliers.Select(s => new { SupplierName = s.SupplierName, Country = s.Country, City = s.City }).OrderBy(s => s.Country).ThenBy(s => s.City))
+			{
+				Console.WriteLine($"{supplier.SupplierName, -40}{supplier.Country, -15}{supplier.City}");
+			}
+			Console.WriteLine(@"--------------------------------------------------------------------");
+
 		}
 
 		[Category("LINQ Tasks")]
@@ -170,8 +188,18 @@ namespace SampleQueries
 					ObjectDumper.Write(c.CustomerID);
 				}
 
-				Console.WriteLine($"Всего клиентов: {clients.Count()}");
 				Console.WriteLine(@"-------------------------------------");
+			}
+
+			Console.WriteLine("Customer  Max order");
+			var orders = from cust in dataSource.Customers
+						 orderby cust.CustomerID
+						 where cust.Orders.Length > 0 
+						 select new {Name = cust.CustomerID, Max = cust.Orders.Max(o => o.Total)};
+
+			foreach (var o in orders)
+			{
+				Console.WriteLine($"{o.Name,-10}{o.Max}");
 			}
 		}
 
@@ -195,6 +223,15 @@ namespace SampleQueries
 			{
 				Console.WriteLine("{0,-10}{1,-15}{2,-20}", c.Name, c.Date.Year, c.Date.Month);
 			}
+			Console.WriteLine(@"----------------------------------------------------------------");
+			Console.WriteLine("{0, -10}{1}", "Customer", "Order Date");
+			foreach (var customer in dataSource.Customers)
+			{
+				foreach (var order in customer.Orders.OrderBy(o => o.OrderDate))
+				{
+					Console.WriteLine($"{customer.CustomerID,-10}{order.OrderDate:g}");
+				}
+			}
 		}
 
 		[Category("LINQ Tasks")]
@@ -211,13 +248,13 @@ namespace SampleQueries
 							Cust = c,
 							Year = c.Orders.Min(o => o.OrderDate).Year,
 							Month = c.Orders.Min(o => o.OrderDate).Month,
-							Turn = c.Orders.Sum(o => o.Total)
-						}).OrderBy(c => c.Year).ThenBy(c => c.Month).ThenByDescending(c => c.Turn).ThenBy(c => c.Cust.CustomerID);
+							Sum = c.Orders.Sum(o => o.Total)
+						}).OrderBy(c => c.Year).ThenBy(c => c.Month).ThenByDescending(c => c.Sum).ThenBy(c => c.Cust.CustomerID);
 
 			Console.WriteLine("{0,-10}{1,-15}{2,-20}{3,-25}", "Year", "Month", "Turn", "Client");
 			foreach (var c in clients)
 			{
-				Console.WriteLine("{0,-10}{1,-15}{2,-20}{3,-25}", c.Year, c.Month, c.Turn, c.Cust.CustomerID);
+				Console.WriteLine("{0,-10}{1,-15}{2,-20}{3,-25}", c.Year, c.Month, c.Sum, c.Cust.CustomerID);
 			}
 		}
 
@@ -235,6 +272,13 @@ namespace SampleQueries
 			foreach (var c in clients)
 			{
 				Console.WriteLine("{0,-20}{1,-20}{2,-20}{3,-25}", c.PostalCode, c.Region, c.Phone, c.CustomerID);
+			}
+
+			Console.WriteLine();
+			Console.WriteLine(@"All Clients----------------------------------------------------");
+			foreach (var customer in dataSource.Customers)
+			{
+				Console.WriteLine($"{customer.CustomerID,-10}{customer.Region,-20}{customer.PostalCode,-15}{customer.Phone}");
 			}
 		}
 
@@ -270,6 +314,13 @@ namespace SampleQueries
 					}
 					Console.WriteLine(@"--------------------------------------------------------------------------------");
 				}
+
+			Console.WriteLine();
+			Console.WriteLine("{0,-20}{1,-40}{2,-10}{3}","Category", "Product", "Count", "Price");
+			foreach (var product in dataSource.Products.OrderBy(p => p.Category).ThenBy(p => p.ProductName))
+			{
+				Console.WriteLine($"{product.Category,-20}{product.ProductName,-40}{product.UnitsInStock,-10}{product.UnitPrice}");
+			}
 		}
 
 		[Category("LINQ Tasks")]
