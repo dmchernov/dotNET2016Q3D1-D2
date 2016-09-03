@@ -121,6 +121,7 @@
     <Folder Include="Tables\" />
     <Folder Include="Views\" />
     <Folder Include="Stored Procedures\" />
+    <Folder Include="Scripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Categories.sql" />
@@ -163,5 +164,8 @@
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="NorthwindExtended_1.2.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Scripts\PostScript.sql" />
   </ItemGroup>
 </Project>
