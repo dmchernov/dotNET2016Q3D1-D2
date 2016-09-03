@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="12e6bb22-f3c6-41af-9031-59568e623866" ChangeDateTime="09/03/2016 12:31:25">
+    <Property Name="ElementName" Value="[dbo].[Region]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[Regions]" />
+  </Operation>
+</Operations>
