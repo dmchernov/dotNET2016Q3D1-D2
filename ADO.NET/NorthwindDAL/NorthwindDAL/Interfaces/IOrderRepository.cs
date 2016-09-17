@@ -10,10 +10,11 @@ namespace NorthwindDAL.Interfaces
     public interface IOrderRepository
     {
         IEnumerable<Order> GetOrders();
-        Decimal AddOrder(Order order);
+        Int32 AddOrder(Order order);
         Order GetOrderById(Int32 id, Boolean withDetails);
         Boolean DeleteOrder(Order order);
-        Int32 ProcessOrder(Int32 id, DateTime orderDate);
-        Int32 CompleteOrder(Int32 id, DateTime shippedDate);
+        Order ProcessOrder(Order order, DateTime orderDate);
+        Order CompleteOrder(Order order, DateTime shippedDate);
+        Boolean ChangeOrder(Order order);
     }
 }

@@ -101,8 +101,8 @@
     <Build Include="Stored Procedures\CustOrdersOrders.sql" />
     <Build Include="Stored Procedures\CustOrderHist.sql" />
     <Build Include="Stored Procedures\SalesByCategory.sql" />
-    <None Include="Scripts\ScriptsIgnoredOnImport.sql" />
-    <Build Include="Stored Procedures\GetOrders.sql" />
+    <PostDeploy Include="Scripts\ScriptsIgnoredOnImport.sql" />
+    <Build Include="Stored Procedures\SaveOrderDetails.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Northwind.publish.xml" />

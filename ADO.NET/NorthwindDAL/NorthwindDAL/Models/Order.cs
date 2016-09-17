@@ -94,6 +94,14 @@ namespace NorthwindDAL.Models
             set { if (Status == Status.New) _shipCountry = value; }
         }
 
-        public List<OrderDetails> OrderDetails { get; set; }
+        private List<OrderDetails> _orderDetails;
+        public List<OrderDetails> OrderDetails
+        {
+            get { return _orderDetails; }
+            set
+            {
+                if (Status == Status.New) _orderDetails = value;
+            }
+        }
     }
 }

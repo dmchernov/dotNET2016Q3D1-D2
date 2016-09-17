@@ -10,7 +10,7 @@ namespace NorthwindDAL.Models
     {
         public Int32 ProductId { get; set; }
         public String Product { get; set; }
-        public Decimal Price { get; set; }
+        public Decimal UnitPrice { get; set; }
         public Decimal Quantity { get; set; }
         public Decimal Discount { get; set; }
     }
