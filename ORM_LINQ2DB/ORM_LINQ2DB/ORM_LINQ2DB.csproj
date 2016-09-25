@@ -57,7 +57,11 @@
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\EmployeeTerritories.cs" />
+    <Compile Include="Models\Order.cs" />
+    <Compile Include="Models\OrderDetail.cs" />
     <Compile Include="Models\Product.cs" />
+    <Compile Include="Models\Region.cs" />
+    <Compile Include="Models\Shipper.cs" />
     <Compile Include="Models\Supplier.cs" />
     <Compile Include="Models\Territory.cs" />
     <Compile Include="Northwind.cs" />

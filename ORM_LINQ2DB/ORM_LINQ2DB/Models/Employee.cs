@@ -21,6 +21,9 @@ namespace ORM_LINQ2DB.Models
         [Column]
         public string Title { get; set; }
         [Association(ThisKey = "EmployeeID", OtherKey = "EmployeeID")]
-        public IEnumerable<EmployeeTerritories> EmployeeTerritories { get; set; }
+        public IList<EmployeeTerritories> EmployeeTerritories { get; set; }
+
+		[Association(ThisKey = "EmployeeID", OtherKey = "EmployeeID")]
+		public IList<Order> Orders { get; set; }
     }
 }

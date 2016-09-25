@@ -9,11 +9,17 @@ namespace ORM_LINQ2DB.Models
         [PrimaryKey]
         [Identity]
         [Column]
-        public int TerritoryID { get; set; }
+        public string TerritoryID { get; set; }
         [Column]
         public string TerritoryDescription { get; set; }
 
+        [Column]
+        public int RegionID { get; set; }
+
         [Association(ThisKey = "TerritoryID", OtherKey = "TerritoryID")]
         public IList<EmployeeTerritories> EmployeeTerritories { get; set; }
+
+        [Association(ThisKey = "RegionID", OtherKey = "RegionID")]
+        public Region Region { get; set; }
     }
 }
