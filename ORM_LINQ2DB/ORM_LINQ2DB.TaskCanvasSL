@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SerializableModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <tasks>
+    <tasks>
+      <Task>
+        <blocks />
+        <tabs>
+          <DocumentTab>
+            <name>UnitTest.cs</name>
+            <path>ORM_LINQ2DB\UnitTest.cs</path>
+            <absolutePath>D:\GIT\ment_net_2016q3_d1\ORM_LINQ2DB\ORM_LINQ2DB\UnitTest.cs</absolutePath>
+            <position>
+              <line>216</line>
+              <column>60</column>
+              <lineHash>0CbTj7fa46Z2QKD18wMzu2YL+kFHXDtIXRce/DJpK8s=</lineHash>
+            </position>
+          </DocumentTab>
+          <DocumentTab>
+            <name>App.config</name>
+            <path>ORM_LINQ2DB\App.config</path>
+            <absolutePath>D:\GIT\ment_net_2016q3_d1\ORM_LINQ2DB\ORM_LINQ2DB\App.config</absolutePath>
+            <position>
+              <line>1</line>
+              <column>1</column>
+              <lineHash>Mz//qPZmnuxOE7Dr1TpgBLfh4AjHxPdw/JhlS2TiUX4=</lineHash>
+            </position>
+          </DocumentTab>
+        </tabs>
+        <name>Misc</name>
+        <selectedBlock>-1</selectedBlock>
+        <selectedTab>-1</selectedTab>
+      </Task>
+    </tasks>
+    <selectedTask>0</selectedTask>
+  </tasks>
+</SerializableModel>

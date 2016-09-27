@@ -1,3 +1,4 @@
+using EntityFrameworkExample.Migrations;
 using EntityFrameworkExample.Model;
 
 namespace EntityFrameworkExample
@@ -12,6 +13,7 @@ namespace EntityFrameworkExample
         public Northwind()
             : base("name=Northwind")
         {
+			Database.SetInitializer(new MigrateDatabaseToLatestVersion<Northwind, Configuration>());
         }
 
         public virtual DbSet<Category> Categories { get; set; }

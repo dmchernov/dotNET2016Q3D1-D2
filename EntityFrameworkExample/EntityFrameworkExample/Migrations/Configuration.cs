@@ -35,6 +35,20 @@ namespace EntityFrameworkExample.Migrations
                 new Category {CategoryID = 3, CategoryName = "Confections", Description = "Desserts, candies, and sweet breads" },
                 new Category {CategoryID = 4, CategoryName = "Dairy Products", Description = "Cheeses" });
 
+			context.Products.AddOrUpdate(p => p.ProductID,
+				new Product {ProductID = 1, CategoryID = 1, ProductName = "Coffee"},
+				new Product {ProductID = 2, CategoryID = 2, ProductName = "Spread"});
+
+			context.Customers.AddOrUpdate(c => c.CustomerID,
+				new Customer {CustomerID = "ABCDE", CompanyName = "Company", ContactName = "Name", ContactTitle = "Title"});
+
+			context.Orders.AddOrUpdate(o => o.OrderID,
+				new Order {OrderID = 1, CustomerID = "ABCDE"});
+
+			context.Order_Details.AddOrUpdate(od => new { od.ProductID, od.OrderID }, 
+				new Order_Detail {OrderID = 1, ProductID = 1, UnitPrice = 20, Quantity = 5, Discount = 0.1F},
+				new Order_Detail {OrderID = 1, ProductID = 2, UnitPrice = 50, Quantity = 15, Discount = 0.3F});
+
             context.Regions.AddOrUpdate(r => r.RegionID,
                 new Region {RegionID = 1, RegionDescription = "Eastern" },
                 new Region {RegionID = 2, RegionDescription = "Western" },
