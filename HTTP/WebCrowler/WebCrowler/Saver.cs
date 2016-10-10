@@ -7,8 +7,12 @@ namespace WebCrowler
 {
 	static class Saver
 	{
-		private static readonly string _root = Directory.GetCurrentDirectory();
+		private static string _root;
 		//public static List<string> Extensions = new List<string>();
+		public static void SetRoot(string path)
+		{
+			_root = path;
+		}
 
 		public static bool Save(string address, string content)
 		{

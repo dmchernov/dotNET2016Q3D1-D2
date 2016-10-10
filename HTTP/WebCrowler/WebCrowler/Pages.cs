@@ -10,14 +10,13 @@ namespace WebCrowler
 		{
 			if (LoadedPages.Contains(link)) return false;
 
-			LoadedPages.Add(link);
 			return true;
 		}
 
-		public static void AddRootPage(string root)
+		public static void AddPage(string address)
 		{
-			if (!LoadedPages.Contains(root))
-				LoadedPages.Add(root);
+			if (!LoadedPages.Contains(address))
+				LoadedPages.Add(address);
 		}
 	}
 }

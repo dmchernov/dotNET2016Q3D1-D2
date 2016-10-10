@@ -13,16 +13,17 @@ namespace WebCrowler
 	    private readonly int _level;
 	    private bool _currentDomain;
 	    private string _rootAddress;
-	    public Crowler(int level, bool currentDomain/*, List<string> extensionsList*/)
+	    public Crowler(int level, bool currentDomain, string path)
 	    {
 		    _level = level;
 		    _currentDomain = currentDomain;
-		    //Saver.Extensions = extensionsList;
+		    Saver.SetRoot(path);
 	    }
 
 	    public EventHandler<PageEventArgs> ContentLoaded;
+	    public EventHandler<PageEventArgs> PageNotLoaded;
 
-	    public Crowler() : this(0, true) { }
+	    //public Crowler() : this(0, true) { }
 
 	    public void Run(string address)
 	    {
@@ -33,10 +34,13 @@ namespace WebCrowler
 	    {
 			if (level < 0) return;
 
+			var pattern = @"(http|https){1}\://[a-zA-Z]+[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}";
+			var regEx = new Regex(pattern);
+
 			if (String.IsNullOrEmpty(_rootAddress))
 		    {
-			    _rootAddress = address;
-			    Pages.AddRootPage(address);
+			    _rootAddress = regEx.Match(address).Value; ;
+			    Pages.AddPage(_rootAddress);
 		    }
 
 		    var client = new HttpClient();
@@ -47,6 +51,8 @@ namespace WebCrowler
 			}
 		    catch (Exception)
 		    {
+				if (PageNotLoaded != null)
+					PageNotLoaded?.Invoke(this, new PageEventArgs {Address = address});
 			    return;
 		    }
 		    
@@ -62,16 +68,12 @@ namespace WebCrowler
 			foreach (var element in angle.QuerySelectorAll("a"))
 			{
 				var s = element.GetAttribute("href");
-				if (String.IsNullOrEmpty(s) || s == "/" || s.Contains("#")) continue;
+				if (String.IsNullOrEmpty(s) || s == "/" || s.Contains("#") || s.Contains("@")) continue;
 				links.Add(s);
 			}
 
 			// Оставляем только уникальные ссылки
 			links = links.Distinct().ToList();
-
-		    var pattern = @"(http|https){1}\://[a-zA-Z]+[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}";
-
-			var regEx = new Regex(pattern);
 
 			foreach (var link in links)
 			{
@@ -87,9 +89,11 @@ namespace WebCrowler
 						continue;
 				}
 				
-				//Console.WriteLine(newLink);
 				if (Pages.CanBeLoad(newLink))
+				{
+					Pages.AddPage(newLink);
 					Load(newLink, level - 1);
+				}
 			}
 		}
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using WebCrowler;
 
 namespace WebCrowlerUser
@@ -26,16 +27,36 @@ namespace WebCrowlerUser
 			//else
 			//	ext = input.Split(',').ToList();
 
-			var c = new Crowler(level, domen) {ContentLoaded = ContentLoaded};
+			Console.WriteLine("Ведите путь для сохранения (по умолчанию папка приложения)");
+			var path = Console.ReadLine();
+			try
+			{
+				Directory.CreateDirectory(path);
+			}
+			catch (Exception)
+			{
+				Console.WriteLine("Неправильный путь. Будет использован путь по умолчанию");
+				path = Directory.GetCurrentDirectory();
+			}
+			
+
+			var c = new Crowler(level, domen, path) {ContentLoaded = ContentLoaded, PageNotLoaded = PageNotLoaded};
 			c.Run(String.IsNullOrEmpty(address) ? @"https://www.epam.com" : address);
 
 			Console.WriteLine("\n\nPress any key to continue...");
 			Console.ReadLine();
 		}
 
+		private static void PageNotLoaded(object sender, PageEventArgs pageEventArgs)
+		{
+			Console.ForegroundColor = ConsoleColor.Red;
+			Console.WriteLine($"Page \"{pageEventArgs.Address}\" not loaded");
+		}
+
 		private static void ContentLoaded(object sender, PageEventArgs eventArgs)
 		{
-			Console.WriteLine(eventArgs.Address);
+			Console.ForegroundColor = ConsoleColor.Green;
+			Console.WriteLine($"Page \"{eventArgs.Address}\" was loaded");
 		}
 	}
 }
