@@ -2,67 +2,31 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 
 namespace WebCrowler
 {
 	static class Saver
 	{
 		private static string _root;
-		//public static List<string> Extensions = new List<string>();
+		public static List<string> Extensions = new List<string>();
 		public static void SetRoot(string path)
 		{
 			_root = path;
 		}
 
-		public static bool Save(string address, string content)
+		public static bool SavePage(string address, string content)
 		{
-			//var ext = address.GetExtension();
-			//if (!String.IsNullOrEmpty(ext))
-			//	if (!Extensions.Contains(ext))
-			//		return false;
-
-			//var client = new HttpClient();
-			//var responce = client.GetAsync(address);
-
-			//if (responce.Result.StatusCode != HttpStatusCode.OK) return false;
-			//var type = responce.Result.Content.Headers.ContentType.MediaType;
-
-			//Console.WriteLine(type);
-
-			//string body = String.Empty;
-			//byte[] file = null;
-
-			//try
-			//{
-			//	if (type == "text/html")
-			//	{
-			//		body = client.GetStringAsync(address).Result;
-			//	}
-			//	//else
-			//	//if (type == "application/pdf")
-			//	//	file = client.GetByteArrayAsync(address).Result;
-			//}
-			//catch (Exception)
-			//{
-			//	return false;
-			//}
-			
-
-			address = CreateDirectory(address);
-			if (String.IsNullOrEmpty(address)) return false;
+			var path = CreateDirectory(address);
+			if (String.IsNullOrEmpty(path)) return false;
 			try
 			{
 				if(!String.IsNullOrEmpty(content))
-				using (StreamWriter fileWriter = new StreamWriter(Path.Combine(address, "index.html")))
+				using (StreamWriter fileWriter = new StreamWriter(Path.Combine(path, "index.html")))
 				{
 					fileWriter.Write(content);
 					return true;
 				}
-				//if(file != null)
-				//	using (FileStream stream = new FileStream(Path.Combine(address, "file.pdf"), FileMode.Create))
-				//	{
-				//		stream.Write(file,0, file.Length);
-				//	}
 				return true;
 			}
 			catch (Exception)
@@ -70,6 +34,27 @@ namespace WebCrowler
 				return false;
 			}
 			
+		}
+
+		public static bool SaveFile(string address)
+		{
+			var client = new HttpClient();
+			var file = client.GetByteArrayAsync(address).Result;
+			var name = address.Substring(address.LastIndexOf('/') + 1);
+			if (String.IsNullOrEmpty(name.GetExtension()) || !Extensions.Contains(name.GetExtension())) return false;
+			var dir = CreateDirectory(address.Substring(0, address.LastIndexOf('/')));
+			try
+			{
+				using (FileStream stream = new FileStream(Path.Combine(dir, name), FileMode.Create))
+				{
+					stream.Write(file, 0, file.Length);
+					return true;
+				}
+			}
+			catch
+			{
+				return false;
+			}
 		}
 
 		private static string CreateDirectory(string address)
@@ -80,6 +65,7 @@ namespace WebCrowler
 				{
 					address = address.Substring(0, address.IndexOf('?'));
 					if (!Pages.CanBeLoad(address)) return String.Empty;
+					Pages.AddPage(address);
 				}
 
 				if (address.StartsWith("http://")) address = address.Remove(0, 7);
