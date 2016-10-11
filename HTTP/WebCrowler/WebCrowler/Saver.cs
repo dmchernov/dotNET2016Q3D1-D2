@@ -38,11 +38,30 @@ namespace WebCrowler
 
 		public static bool SaveFile(string address)
 		{
-			var client = new HttpClient();
-			var file = client.GetByteArrayAsync(address).Result;
 			var name = address.Substring(address.LastIndexOf('/') + 1);
-			if (String.IsNullOrEmpty(name.GetExtension()) || !Extensions.Contains(name.GetExtension())) return false;
-			var dir = CreateDirectory(address.Substring(0, address.LastIndexOf('/')));
+
+			var isFile = true;
+			
+			string ext = String.Empty;
+
+			if (!String.IsNullOrEmpty(name))
+				ext = name.GetExtension();
+
+			var client = new HttpClient();
+
+			if (String.IsNullOrEmpty(ext))
+			{
+				var mime = client.GetAsync(address).Result.Content.Headers.ContentType.MediaType;
+				ext = ExtensionsManager.GetExtensionForMime(mime);
+				name = "image." + ext;
+				isFile = false;
+			}
+
+			if (String.IsNullOrEmpty(ext) || (!String.IsNullOrEmpty(ext) && !Extensions.Contains(ext))) return false;
+
+			var file = client.GetByteArrayAsync(address).Result;
+
+			var dir = CreateDirectory(isFile ? address.Substring(0, address.LastIndexOf('/')) : address);
 			try
 			{
 				using (FileStream stream = new FileStream(Path.Combine(dir, name), FileMode.Create))
