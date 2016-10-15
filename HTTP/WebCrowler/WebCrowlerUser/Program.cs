@@ -19,17 +19,12 @@ namespace WebCrowlerUser
 
 		public static void Main(string[] args)
 		{
-			// Для запуска необходимо испоьзовать аргументы командной строки, иначе произойдет запуск с параметрами по умолчанию
-			// Формат:
-			// http://www.example.com - адрес ресурса
-			// true\false - загружать страницы только в пределах текущего домена
-			// 3 - уровень рекурсии при обходе страниц
-			// jpg,bmp,png - расширения допустимых графических файлов через запятую без пробела
-			// d:\temp - локальный абсолютный путь сохранения контента
-			// http://www.playground.ru false 3 jpg,png,bmp,ico,gif d:\temp\httpTemp
-
 			if (args.Length > 0 && args[0] == "-?")
+			{
 				ShowHelp();
+				Console.ReadKey();
+				return;
+			}
 			else if (args.Length > 0 && args.Length%2 == 0)
 			{
 				for (int i = 0; i < args.Length; i += 2)

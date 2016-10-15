@@ -45,14 +45,7 @@ namespace WebCrowler
 
 		public static bool IsCurrentDomainLink(string domain, string address)
 		{
-			var link = GetValidUri(domain, address);
-
-			if (UriRegEx.IsMatch(link))
-			{
-				return true;
-			}
-
-			return false;
+			return DomainRegEx.Match(domain).Value == DomainRegEx.Match(address).Value;
 		}
 
 		public static string GetRootUri(string address)
@@ -66,11 +59,18 @@ namespace WebCrowler
 			var name = address.Substring(address.LastIndexOf('/'));
 			return name.Contains('.');
 		}
-
 		public static string GetFileNameFromUri(string address)
 		{
 			if (address.Contains('?')) address = address.Substring(0, address.IndexOf('?'));
 			return (IsFileUri(address)) ? address.Substring(address.LastIndexOf('/') + 1) : String.Empty;
+		}
+
+		public static string RemoveProtocol(string address)
+		{
+			if (address.StartsWith("http://")) address = address.Remove(0, 7);
+			if (address.StartsWith("https://")) address = address.Remove(0, 8);
+
+			return address;
 		}
 	}
 }

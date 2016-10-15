@@ -8,13 +8,17 @@ namespace WebCrowler
 
 		public static bool CanBeLoad(string link)
 		{
-			return !LoadedLinks.Contains(link);
+			return !LoadedLinks.Contains(UrlHelper.RemoveProtocol(link));
 		}
 
 		public static void AddLink(string address)
 		{
+			address = UrlHelper.RemoveProtocol(address);
+
 			if (CanBeLoad(address))
+			{
 				LoadedLinks.Add(address);
+			}
 		}
 	}
 }

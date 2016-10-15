@@ -10,8 +10,7 @@ namespace WebCrowler
 		{
 			try
 			{
-				if (address.StartsWith("http://")) address = address.Remove(0, 7);
-				if (address.StartsWith("https://")) address = address.Remove(0, 8);
+				address = UrlHelper.RemoveProtocol(address);
 
 				if (address.Contains('?'))
 					address = address.Substring(0, address.IndexOf('?'));

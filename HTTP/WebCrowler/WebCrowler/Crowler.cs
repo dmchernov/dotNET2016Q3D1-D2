@@ -35,16 +35,20 @@ namespace WebCrowler
 			// Окончание загрузки, если достигнута максимальная глубина рекурсии
 			if (level < 0) return;
 
-			// Установка корневого домена для корректного формирования ссылок
-			_selector.RootDomain = UrlHelper.GetRootUri(address);
-			if (String.IsNullOrEmpty(_selector.RootDomain)) return;
-
 			// Домен, с которым было запущено приложение
 			if (String.IsNullOrEmpty(_rootAddress))
 			{
 				_rootAddress = UrlHelper.GetRootUri(address);
 				LinkRepository.AddLink(_rootAddress);
 			}
+
+			LinkRepository.AddLink(address);
+
+			// Установка корневого домена для корректного формирования ссылок
+			_selector.RootDomain = UrlHelper.GetRootUri(address);
+			if (String.IsNullOrEmpty(_selector.RootDomain)) return;
+
+			
 
 			// HTML код страницы
 			string html = String.Empty;
