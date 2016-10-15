@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
+using System.Text;
 
 namespace WebCrowler
 {
@@ -10,19 +10,56 @@ namespace WebCrowler
 	{
 		private static string _root;
 		public static List<string> Extensions = new List<string>();
+
 		public static void SetRoot(string path)
 		{
 			_root = path;
 		}
 
-		public static bool SavePage(string address, string content)
+		public static bool Save(string address)
 		{
-			var path = CreateDirectory(address);
-			if (String.IsNullOrEmpty(path)) return false;
+			using (var client = new HttpClient())
+			{
+				var contentType = client.GetAsync(address).Result.Content.Headers.ContentType;
+				var type = contentType.MediaType.Substring(0, contentType.MediaType.IndexOf('/'));
+				try
+				{
+					switch (type)
+					{
+						case "text":
+							var textContent = client.GetStringAsync(address).Result;
+							var encoding = String.IsNullOrEmpty(contentType.CharSet) ? Encoding.UTF8 : Encoding.GetEncoding(contentType.CharSet);
+							return SaveWebPage(address, textContent, ExtensionsManager.GetExtensionForMime(contentType.MediaType), encoding);
+						case "image":
+							var image = client.GetByteArrayAsync(address).Result;
+							var ext = ExtensionsManager.GetExtensionForMime(contentType.MediaType);
+							if (Extensions.Contains(ext))
+								return SaveFile(address, image, ext);
+							break;
+					}
+					return false;
+				}
+				catch
+				{
+					return false;
+				}
+				
+			}
+		}
+
+		private static bool SaveWebPage(string address, string content, string ext, Encoding encoding)
+		{
+			var dir = DirectoryCreator.CreateDirectoryFromUri(_root, address);
+			if (String.IsNullOrEmpty(dir)) return false;
+
+			var fileName = UrlHelper.GetFileNameFromUri(address);
+
+			if (String.IsNullOrEmpty(fileName) || fileName.GetExtension() != ext) fileName = "index." + ext;
+
 			try
 			{
 				if(!String.IsNullOrEmpty(content))
-				using (StreamWriter fileWriter = new StreamWriter(Path.Combine(path, "index.html")))
+				using (StreamWriter fileWriter = new StreamWriter(Path.Combine(dir, fileName), false, encoding))
 				{
 					fileWriter.Write(content);
 					return true;
@@ -36,35 +73,18 @@ namespace WebCrowler
 			
 		}
 
-		public static bool SaveFile(string address)
+		private static bool SaveFile(string address, byte[] file, string ext)
 		{
-			var name = address.Substring(address.LastIndexOf('/') + 1);
+			var dir = DirectoryCreator.CreateDirectoryFromUri(_root, address);
+			if (String.IsNullOrEmpty(dir)) return false;
 
-			var isFile = true;
-			
-			string ext = String.Empty;
+			var fileName = UrlHelper.GetFileNameFromUri(address);
+			if (String.IsNullOrEmpty(fileName))
+				fileName = "file." + ext;
 
-			if (!String.IsNullOrEmpty(name))
-				ext = name.GetExtension();
-
-			var client = new HttpClient();
-
-			if (String.IsNullOrEmpty(ext))
-			{
-				var mime = client.GetAsync(address).Result.Content.Headers.ContentType.MediaType;
-				ext = ExtensionsManager.GetExtensionForMime(mime);
-				name = "image." + ext;
-				isFile = false;
-			}
-
-			if (String.IsNullOrEmpty(ext) || (!String.IsNullOrEmpty(ext) && !Extensions.Contains(ext))) return false;
-
-			var file = client.GetByteArrayAsync(address).Result;
-
-			var dir = CreateDirectory(isFile ? address.Substring(0, address.LastIndexOf('/')) : address);
 			try
 			{
-				using (FileStream stream = new FileStream(Path.Combine(dir, name), FileMode.Create))
+				using (FileStream stream = new FileStream(Path.Combine(dir, fileName), FileMode.Create))
 				{
 					stream.Write(file, 0, file.Length);
 					return true;
@@ -74,32 +94,6 @@ namespace WebCrowler
 			{
 				return false;
 			}
-		}
-
-		private static string CreateDirectory(string address)
-		{
-			try
-			{
-				if (address.Contains('?'))
-				{
-					address = address.Substring(0, address.IndexOf('?'));
-					if (!Pages.CanBeLoad(address)) return String.Empty;
-					Pages.AddPage(address);
-				}
-
-				if (address.StartsWith("http://")) address = address.Remove(0, 7);
-				if (address.StartsWith("https://")) address = address.Remove(0, 8);
-
-				var path = Path.Combine(_root, address);
-
-				Directory.CreateDirectory(path);
-				return path;
-			}
-			catch (Exception)
-			{
-				return String.Empty;
-			}
-			
 		}
 	}
 }

@@ -25,14 +25,31 @@ namespace WebCrowler
 					return "png";
 				case "image/svg+xml":
 					return "svg";
-				case "image / tiff":
+				case "image/tiff":
 					return "tiff";
 				case "image/vnd.microsoft.icon":
+				case "image/x-icon":
 					return "ico";
 				case "image/vnd.wap.wbmp":
 					return "bmp";
 				case "image/webp":
 					return "webp";
+				case "text/cmd":
+					return "cmd";
+				case "text/css":
+					return "css";
+				case "text/csv":
+					return "csv";
+				case "text/html":
+					return "html";
+				case "text/javascript":
+					return "js";
+				case "text/plain":
+					return "txt";
+				case "text/php":
+					return "php";
+				case "text/xml":
+					return "xml";
 				default:
 					return String.Empty;
 			}

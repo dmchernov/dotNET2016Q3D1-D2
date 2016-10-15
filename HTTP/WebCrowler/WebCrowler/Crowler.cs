@@ -1,163 +1,121 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text.RegularExpressions;
-using AngleSharp.Dom.Html;
-using AngleSharp.Parser.Html;
 
 namespace WebCrowler
 {
-    public class Crowler
-    {
-	    private readonly int _level;
-	    private readonly bool _currentDomain;
-	    private string _rootAddress;
-	    
-	    public Crowler(int level, bool currentDomain, string path, List<String> ext)
-	    {
-		    _level = level;
-		    _currentDomain = currentDomain;
-		    Saver.SetRoot(path);
-		    Saver.Extensions = ext;
-	    }
+	public class Crowler
+	{
+		private readonly int _level;
+		private readonly bool _currentDomain;
+		private string _rootAddress;
+		private readonly LinkSelector _selector;
+		
+		public Crowler(int level, bool currentDomain, string path, List<String> ext)
+		{
+			_level = level;
+			_currentDomain = currentDomain;
+			Saver.SetRoot(path);
+			Saver.Extensions = ext;
+			_selector = new LinkSelector();
+		}
 
-	    public EventHandler<PageEventArgs> ContentLoaded;
-	    public EventHandler<PageEventArgs> ContentNotLoaded;
-	    public EventHandler<PageEventArgs> ContentSkipped;
+		public EventHandler<PageEventArgs> ContentLoaded;
+		public EventHandler<PageEventArgs> ContentNotLoaded;
+		public EventHandler<PageEventArgs> ContentSkipped;
 
-	    public void Run(string address)
-	    {
-		    Load(address, _level);
-	    }
+		public void Run(string address)
+		{
+			Load(address, _level);
+		}
 
-	    private void Load(string address, int level)
-	    {
+		private void Load(string address, int level)
+		{
+			// Окончание загрузки, если достигнута максимальная глубина рекурсии
 			if (level < 0) return;
 
-			var uri = @"(http|https){1}\://[a-zA-Z]+[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}";
-		    var domain = @"[a-zA-Z]+[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}";
-			var regExUri = new Regex(uri);
-		    var regExDomain = new Regex(domain);
+			// Установка корневого домена для корректного формирования ссылок
+			_selector.RootDomain = UrlHelper.GetRootUri(address);
+			if (String.IsNullOrEmpty(_selector.RootDomain)) return;
 
+			// Домен, с которым было запущено приложение
 			if (String.IsNullOrEmpty(_rootAddress))
-		    {
-			    _rootAddress = regExUri.Match(address).Value;
-			    Pages.AddPage(_rootAddress);
-		    }
-
-		    var client = new HttpClient();
-		    string html = String.Empty;
-		    try
-		    {
-			    var responce = client.GetAsync(address);
-				if (responce.Result.Content.Headers.ContentType.MediaType == "text/html")
-					html = client.GetStringAsync(address).Result;
-			}
-		    catch (Exception)
-		    {
-			    ContentNotLoaded?.Invoke(this, new PageEventArgs {Address = address});
-			    return;
-		    }
-		    
-			if (!String.IsNullOrEmpty(html))
 			{
-				if (Saver.SavePage(address, html))
-					ContentLoaded?.Invoke(this, new PageEventArgs() { Address = address });
+				_rootAddress = UrlHelper.GetRootUri(address);
+				LinkRepository.AddLink(_rootAddress);
 			}
 
-			var links = new List<string>();
+			// HTML код страницы
+			string html = String.Empty;
 
-			IHtmlDocument angle = new HtmlParser().Parse(html);
-			
-			// Ссылки на другие ресурсы
-			foreach (var element in angle.QuerySelectorAll("a"))
+			using (var client = new HttpClient())
 			{
-				var s = element.GetAttribute("href");
-				if (String.IsNullOrEmpty(s) || s == "/" || s.Contains("#") || s.Contains("@") || s.Contains(",") || s.Contains("*")) continue;
-				links.Add(s);
-			}
-
-			// Ссылки на картинки
-			foreach (var element in angle.QuerySelectorAll("img"))
-			{
-				var s = element.GetAttribute("src");
-				if (String.IsNullOrEmpty(s) || s == "/" || s.Contains("#") || s.Contains("?") || s.Contains(",") || s.Contains("*")) continue;
-
-				while (s[0] == '/')
-				{
-					s = s.Substring(1);
-				}
-
-				if (!regExUri.IsMatch(s))
-				{
-					if (!regExDomain.IsMatch(s) || regExDomain.IsMatch(s) && (s.Contains("/") && !s.Substring(0, s.IndexOf("/", StringComparison.Ordinal)).Contains(".")))
-						s = regExUri.Match(address).Value + "/" + s;
-					else
-						s = "http://" + s;
-				}
-
 				try
 				{
-					if (Pages.CanBeLoad(s) && client.GetAsync(s).Result.StatusCode == HttpStatusCode.OK)
+					var responce = client.GetAsync(address);
+					if (responce.Result.Content.Headers.ContentType.MediaType == "text/html" && responce.Result.StatusCode == HttpStatusCode.OK)
+						html = client.GetStringAsync(address).Result;
+				}
+				catch (Exception)
+				{
+					ContentNotLoaded?.Invoke(this, new PageEventArgs {Address = address});
+					return;
+				}
+			}
+
+			if (!String.IsNullOrEmpty(html))
+			{
+				if (Saver.Save(address))
+					ContentLoaded?.Invoke(this, new PageEventArgs() { Address = address });
+			}
+			else return;
+
+			// Ссылки на web страницы
+			var links = _selector.GetLinksFromHtml(html, "a", "href");
+
+			// Загрузка картинок
+			LoadContentFromAttribute(html, "img", "src");
+
+			// Загрузка web страниц, на которые указывают ссылки с данной страницы
+			foreach (var link in links)
+			{
+				if (_currentDomain && !UrlHelper.IsCurrentDomainLink(_rootAddress, link))
+					continue;
+
+				if (LinkRepository.CanBeLoad(link))
+				{
+					LinkRepository.AddLink(link);
+					Load(link, level - 1);
+				}
+			}
+		}
+
+		private void LoadContentFromAttribute(string html, string element, string attribute)
+		{
+			var contentLinks = _selector.GetLinksFromHtml(html, element, attribute);
+			foreach (var content in contentLinks)
+			{
+				try
+				{
+					if (LinkRepository.CanBeLoad(content))
 					{
-						Pages.AddPage(s);
-						if (Saver.SaveFile(s))
-							ContentLoaded?.Invoke(this, new PageEventArgs {Address = s});
+						LinkRepository.AddLink(content);
+						if (Saver.Save(content))
+							ContentLoaded?.Invoke(this, new PageEventArgs { Address = content });
 						else
-							ContentNotLoaded?.Invoke(this, new PageEventArgs { Address = s });
+							ContentNotLoaded?.Invoke(this, new PageEventArgs { Address = content });
 					}
 					else
 					{
-						ContentSkipped(this, new PageEventArgs {Address = s});
+						ContentSkipped(this, new PageEventArgs { Address = content });
 					}
 				}
 				catch (Exception)
 				{
-					ContentNotLoaded?.Invoke(this, new PageEventArgs {Address = s});
-				}
-			}
-
-			// Оставляем только уникальные ссылки
-			links = links.Distinct().ToList();
-
-			foreach (var link in links)
-			{
-				string newLink = link;
-				while (newLink[0] == '/')
-				{
-					newLink = newLink.Substring(1);
-				}
-				
-				if (!regExUri.IsMatch(newLink))
-				{
-					if (regExDomain.IsMatch(newLink) && ((newLink.Contains("/") && newLink.Substring(0, newLink.IndexOf('/')) == regExDomain.Match(newLink).Value) || newLink == regExDomain.Match(newLink).Value))
-						newLink = "http://" + newLink;
-					else if (!String.IsNullOrEmpty(regExUri.Match(address).Value))
-						newLink = regExUri.Match(address).Value + (link[0] == '/' ? link : "/" + link);
-					else
-					{
-						ContentSkipped?.Invoke(this, new PageEventArgs {Address = newLink});
-						continue;
-					}
-				}
-				if (_currentDomain)
-				{
-					var s = regExUri.Match(newLink).Value;
-					if (s != regExUri.Match(_rootAddress).Value)
-					{
-						ContentSkipped?.Invoke(this, new PageEventArgs { Address = newLink });
-						continue;
-					}
-				}
-				
-				if (Pages.CanBeLoad(newLink))
-				{
-					Pages.AddPage(newLink);
-					Load(newLink, level - 1);
+					ContentNotLoaded?.Invoke(this, new PageEventArgs { Address = content });
 				}
 			}
 		}
-    }
+	}
 }

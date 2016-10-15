@@ -45,11 +45,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Crowler.cs" />
+    <Compile Include="DirectoryCreator.cs" />
     <Compile Include="ExtensionsManager.cs" />
+    <Compile Include="LinkSelector.cs" />
     <Compile Include="PageEventArgs.cs" />
-    <Compile Include="Pages.cs" />
+    <Compile Include="LinkRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Saver.cs" />
+    <Compile Include="UrlHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
