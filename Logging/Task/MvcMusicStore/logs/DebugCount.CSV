@@ -1,0 +1,5 @@
+DebugCount
+6
+
+Запрос в Log Parser Studio
+SELECT COUNT(*) AS DebugCount FROM '[LOGFILEPATH]' WHERE Text LIKE '%ERROR%'

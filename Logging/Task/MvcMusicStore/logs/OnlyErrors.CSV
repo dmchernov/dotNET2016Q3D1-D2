@@ -1,0 +1,7 @@
+Text
+15-10-2016 15:02:32 ERROR Invalid username or password.
+15-10-2016 15:17:28 ERROR User name РёРІР°РЅ is invalid, can only contain letters or digits.
+15-10-2016 15:17:53 ERROR Invalid username or password.
+
+Запрос в Log Parser Studio
+SELECT Text FROM '[LOGFILEPATH]' WHERE Text LIKE '%ERROR%'

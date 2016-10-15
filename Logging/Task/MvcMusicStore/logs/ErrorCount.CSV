@@ -1,0 +1,5 @@
+ErrorCount
+3
+
+Запрос в Log Parser Studio
+SELECT COUNT(*) AS ErrorCount FROM '[LOGFILEPATH]' WHERE Text LIKE '%ERROR%'

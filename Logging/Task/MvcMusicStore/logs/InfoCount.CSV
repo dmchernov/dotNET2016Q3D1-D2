@@ -1,0 +1,5 @@
+InfoCount
+3
+
+Запрос в Log Parser Studio
+SELECT COUNT(*) AS InfoCount FROM '[LOGFILEPATH]' WHERE Text LIKE '%INFO%'

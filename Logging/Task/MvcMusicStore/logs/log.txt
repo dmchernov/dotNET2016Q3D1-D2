@@ -1,15 +1,12 @@
-ERROR 2016-10-09 16:23:16,801 30486ms AccountController      MoveNext           - Invalid username or password.
-ERROR 2016-10-09 16:38:27,636 24746ms MvcApplication+<>c     MoveNext           - Invalid username or password.
-INFO  2016-10-09 16:42:58,127   536ms MvcApplication         Application_Start  - Application started
-DEBUG 2016-10-09 16:43:01,173  3582ms MvcApplication+<>c     MoveNext           - Go to home page
-ERROR 2016-10-09 16:44:08,211 70620ms MvcApplication+<>c     MoveNext           - Invalid username or password.
-INFO  2016-10-09 16:44:36,752 99162ms MvcApplication+<>c     MoveNext           - Item "Babel" was added to cart
-DEBUG 2016-10-09 16:44:36,835 99244ms MvcApplication+<>c     MoveNext           - Go to shopping cart
-INFO  2016-10-09 16:56:20,519   489ms MvcApplication         Application_Start  - Application started
-DEBUG 2016-10-09 16:56:27,827  7796ms MvcApplication+<>c     MoveNext           - Go to home page
-INFO  2016-10-09 16:56:34,435 14405ms MvcApplication+<>c     MoveNext           - Item "Frank" was added to cart
-DEBUG 2016-10-09 16:56:34,492 14462ms MvcApplication+<>c     MoveNext           - Go to shopping cart
-ERROR 2016-10-09 16:56:40,263 20233ms MvcApplication+<>c     MoveNext           - Invalid username or password.
-INFO  2016-10-09 17:05:52,606   609ms MvcApplication         Application_Start  - Application started
-DEBUG 2016-10-09 17:05:59,587  7589ms MvcApplication+<>c     MoveNext           - Go to home page
-ERROR 2016-10-09 17:06:53,763 61765ms MvcApplication+<>c     MoveNext           - User name иван is invalid, can only contain letters or digits.
+15-10-2016 15:01:51 INFO Application started
+15-10-2016 15:02:03 DEBUG Go to home page
+15-10-2016 15:02:22 INFO Item "Barbie Girl" was added to cart
+15-10-2016 15:02:22 DEBUG Go to shopping cart
+15-10-2016 15:02:25 DEBUG Go to shopping cart
+15-10-2016 15:02:32 ERROR Invalid username or password.
+15-10-2016 15:17:28 ERROR User name иван is invalid, can only contain letters or digits.
+15-10-2016 15:17:29 DEBUG Go to home page
+15-10-2016 15:17:31 DEBUG Go to shopping cart
+15-10-2016 15:17:37 INFO Item "4x4=12 " was added to cart
+15-10-2016 15:17:37 DEBUG Go to shopping cart
+15-10-2016 15:17:53 ERROR Invalid username or password.
