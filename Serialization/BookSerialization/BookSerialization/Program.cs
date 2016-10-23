@@ -7,15 +7,16 @@ namespace BookSerialization
 {
 	class Program
 	{
-		private static Catalog _catalog = new Catalog();
+		private static Catalog _catalog = new Catalog() {Date = DateTime.Today};
 		static void Main (string[] args)
 		{
 			// Чтение и десериализация исходного файла
 			Read();
-			
+
 			// Вывод в консоль данных по книгам из исходного xml файла
 			ShowCatalog(_catalog);
-			//var c = new Catalog();
+
+			//var c = new Catalog() {Date = DateTime.Today};
 			//c.Books = new List<Book>();
 			//c.Books.Add(new Book() { Author = "author1", Title = "title1", Description = "desc1", Id = "bk001", Isbn = "isbn1", Publisher = "publ1", PublishDate = DateTime.Today });
 			//c.Books.Add(new Book() { Author = "author2", Title = "title2", Description = "desc2", Id = "bk002", Isbn = "isbn2", Publisher = "publ2", PublishDate = DateTime.Today });
@@ -31,15 +32,10 @@ namespace BookSerialization
 		{
 			try
 			{
-				XmlRootAttribute root = new XmlRootAttribute("catalog");
-				root.Namespace = "http://library.by/catalog";
-				root.IsNullable = true;
-
-				XmlSerializer serializer = new XmlSerializer(typeof(List<Book>), root);
+				XmlSerializer serializer = new XmlSerializer(typeof(Catalog));
 				FileStream fs = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), "Files/books.xml"), FileMode.Open);
 
-				_catalog.Books = new List<Book>();
-				_catalog.Books = (List<Book>)serializer.Deserialize(fs);
+				_catalog = (Catalog)serializer.Deserialize(fs);
 			}
 			catch (Exception e)
 			{
@@ -49,17 +45,13 @@ namespace BookSerialization
 
 		private static void Write(Catalog catalog)
 		{
-			XmlRootAttribute root = new XmlRootAttribute("catalog");
-			root.Namespace = "http://library.by/catalog";
-			root.IsNullable = true;
-
-			XmlSerializer serializer = new XmlSerializer(typeof(List<Book>), root);
+			XmlSerializer serializer = new XmlSerializer(typeof(Catalog));
 			FileStream fs = new FileStream(Path.Combine(Directory.GetCurrentDirectory(), $"Files/new_books.xml"), FileMode.Create);
 
-			serializer.Serialize(fs, catalog.Books);
+			serializer.Serialize(fs, catalog);
 		}
 
-		private static void ShowCatalog(Catalog catalog)
+		private static void ShowCatalog (Catalog catalog)
 		{
 			foreach (var book in catalog.Books)
 			{
