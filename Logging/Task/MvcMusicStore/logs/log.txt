@@ -10,3 +10,12 @@
 15-10-2016 15:17:37 INFO Item "4x4=12 " was added to cart
 15-10-2016 15:17:37 DEBUG Go to shopping cart
 15-10-2016 15:17:53 ERROR Invalid username or password.
+21-10-2016 11:39:31 INFO Application started
+21-10-2016 11:41:19 INFO Application started
+21-10-2016 11:42:44 INFO Application started
+21-10-2016 11:43:10 DEBUG Go to home page
+21-10-2016 11:43:10 DEBUG Go to home page
+21-10-2016 11:43:24 ERROR Invalid username or password.
+21-10-2016 11:43:35 DEBUG Go to home page
+21-10-2016 11:43:36 DEBUG Go to home page
+21-10-2016 11:43:43 DEBUG Go to home page
