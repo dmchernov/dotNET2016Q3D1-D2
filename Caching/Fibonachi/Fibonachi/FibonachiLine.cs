@@ -32,7 +32,7 @@ namespace Fibonachi
 
 		public FibonachiLine CalculateWithPreviousResult(FibonachiLine previous)
 		{
-			ShowPreviousResults(previous);
+			//ShowPreviousResults(previous);
 			Line = previous.Line;
 
 			return Calculate();
