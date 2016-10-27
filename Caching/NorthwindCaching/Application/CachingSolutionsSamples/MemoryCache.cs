@@ -4,14 +4,21 @@ using System.Runtime.Caching;
 
 namespace CachingSolutionsSamples
 {
-	internal class MemoryCache<T> : ICache<T>
+	public class MemoryCache<T> : ICache<T>
 	{
 		private CacheItemPolicy _policy;
 		public MemoryCache() { }
 		public MemoryCache (CacheItemPolicy policy)
 		{
 			_policy = policy;
+			_policy.UpdateCallback += UpdateCallback;
 		}
+
+		private void UpdateCallback(CacheEntryUpdateArguments arguments)
+		{
+			cache.Remove(arguments.Key);
+		}
+
 		ObjectCache cache = MemoryCache.Default;
 		string prefix  = "Cache_" + typeof(T);
 
@@ -25,7 +32,9 @@ namespace CachingSolutionsSamples
 			if (_policy == null)
 				cache.Set(prefix + forUser, collection, new DateTimeOffset(DateTime.Now.AddSeconds(5)));
 			else
-				cache.Add(prefix + forUser, collection, _policy);
+			{
+				cache.Set(prefix + forUser, collection, _policy);
+			}
 		}
 	}
 }
