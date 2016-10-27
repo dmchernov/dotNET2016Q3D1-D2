@@ -11,12 +11,6 @@ namespace CachingSolutionsSamples
 		public MemoryCache (CacheItemPolicy policy)
 		{
 			_policy = policy;
-			_policy.UpdateCallback += UpdateCallback;
-		}
-
-		private void UpdateCallback(CacheEntryUpdateArguments arguments)
-		{
-			cache.Remove(arguments.Key);
 		}
 
 		ObjectCache cache = MemoryCache.Default;
@@ -33,7 +27,7 @@ namespace CachingSolutionsSamples
 				cache.Set(prefix + forUser, collection, new DateTimeOffset(DateTime.Now.AddSeconds(5)));
 			else
 			{
-				cache.Set(prefix + forUser, collection, _policy);
+				cache.Add(prefix + forUser, collection, _policy);
 			}
 		}
 	}
