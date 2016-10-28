@@ -84,57 +84,50 @@ namespace CachingSolutionsSamples
 		}
 
 		[TestMethod]
-		public void SereverMonitorCacheTest()
+		public void ServerMonitorCacheTest()
 		{
-			// Мониторинг БД не работает
-			//var isChanged = false;
 			SqlDependency.Start(@"data source =.; initial catalog = Northwind; integrated security = True;MultipleActiveResultSets=true;");
 
 			using (var connection = new SqlConnection(@"data source =.; initial catalog = Northwind; integrated security = True;MultipleActiveResultSets=true;"))
 			{
 				connection.Open();
-				var command = new SqlCommand("SELECT [CategoryID] FROM [dbo].[Categories]", connection);
+				SqlCommand command = new SqlCommand("SELECT [CategoryID] FROM [dbo].[Categories]", connection);
+
+				var manager = new EntityManager<Category>(new MemoryCache<Category>());
+
+				for (int i = 0; i < 10; i++)
 				{
-					var policy = new CacheItemPolicy();
-
-					var dependency = new SqlDependency(command);
-					//dependency.OnChange += DependencyOnOnChange;
-
-					policy.ChangeMonitors.Add(new SqlChangeMonitor(dependency));
-
-					var manager = new EntityManager<Category>(new MemoryCache<Category>(policy));
-
-					for (int i = 0; i < 10; i++)
+					if (manager.Policy == null || manager.Policy.ChangeMonitors[0].HasChanged)
 					{
-						var categories = manager.Get();
+						command = new SqlCommand("SELECT [CategoryID] FROM [dbo].[Categories]", connection);
+						var dependency = new SqlDependency(command);
+						manager.Policy = new CacheItemPolicy();
+						manager.Policy.ChangeMonitors.Add(new SqlChangeMonitor(dependency));
+					}
+					var categories = manager.Get();
 						foreach (var category in categories)
 						{
 							Console.WriteLine(category.CategoryName);
 						}
 
-						if (i == 3 || i == 6)
+					if (i == 3 || i == 6)
+					{
+						using (var dbContext = new Northwind())
 						{
-							using (var dbContext = new Northwind())
-							{
-								dbContext.Configuration.LazyLoadingEnabled = false;
-								dbContext.Configuration.ProxyCreationEnabled = false;
-								dbContext.Categories.Add(new Category() { CategoryName = "TestCategory" + i });
-								dbContext.SaveChanges();
-							}
+							dbContext.Configuration.LazyLoadingEnabled = false;
+							dbContext.Configuration.ProxyCreationEnabled = false;
+							dbContext.Categories.Add(new Category() { CategoryName = "TestCategory" + i });
+							dbContext.SaveChanges();
 						}
-						command.ExecuteNonQuery();
-						Thread.Sleep(3000);
 					}
+					command.ExecuteNonQueryAsync();
+					Thread.Sleep(300);
 				}
+
 				connection.Close();
 
 				SqlDependency.Stop(@"data source =.; initial catalog = Northwind; integrated security = True;MultipleActiveResultSets=true;");
 			}
-		}
-
-		private void DependencyOnOnChange(object sender, SqlNotificationEventArgs sqlNotificationEventArgs)
-		{
-			Console.WriteLine("\n\nchanged\n\n");
 		}
 	}
 }

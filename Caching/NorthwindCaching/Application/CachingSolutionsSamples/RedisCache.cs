@@ -32,7 +32,7 @@ namespace CachingSolutionsSamples
 
 		}
 
-		public void Set(string forUser, IEnumerable<T> collection)
+		public void Set(string forUser, IEnumerable<T> collection, CacheItemPolicy policy = null)
 		{
 			var db = redisConnection.GetDatabase();
 			var key = prefix + forUser;

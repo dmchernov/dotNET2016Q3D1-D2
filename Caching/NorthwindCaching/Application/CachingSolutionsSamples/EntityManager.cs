@@ -17,6 +17,8 @@ namespace CachingSolutionsSamples
 			this.cache = cache;
 		}
 
+		public CacheItemPolicy Policy { get; set; }
+
 		public IEnumerable<T> Get()
 		{
 			Console.WriteLine("Get " + typeof(T));
@@ -33,7 +35,7 @@ namespace CachingSolutionsSamples
 					dbContext.Configuration.LazyLoadingEnabled = false;
 					dbContext.Configuration.ProxyCreationEnabled = false;
 					result = dbContext.Set<T>().ToList();
-					cache.Set(user, result);
+					cache.Set(user, result, Policy);
 				}
 			}
 
