@@ -23,10 +23,16 @@ namespace SqlMonitor
 				using (var command = new SqlCommand("SELECT [CategoryID], [CategoryName], [Description] FROM [dbo].[Categories]", connection))
 				{
 					var dependency = new SqlDependency(command);
-					dependency.OnChange += DependencyOnOnChange;
+					//dependency.OnChange += DependencyOnOnChange;
 
 					for (int i = 1; i <= 10; i++)
 					{
+						dependency.OnChange -= DependencyOnOnChange;
+						dependency.OnChange += DependencyOnOnChange;
+						command.ExecuteNonQuery();
+						Thread.Sleep(10000);
+						if (isChanged) break;
+
 						using (var dbContext = new Northwind())
 						{
 							dbContext.Configuration.LazyLoadingEnabled = false;
@@ -36,13 +42,6 @@ namespace SqlMonitor
 							Console.WriteLine($"Category {cat.CategoryName} was added");
 							//Console.WriteLine($"Categories count: {dbContext.Categories.Count()}");
 						}
-
-						using (var reader = command.ExecuteReader())
-						{
-							if(reader.Read()) Console.WriteLine(reader.FieldCount);
-						}
-						Thread.Sleep(10000);
-						if (isChanged) break;
 					}
 				}
 				connection.Close();
@@ -57,7 +56,10 @@ namespace SqlMonitor
 		private static void DependencyOnOnChange(object sender, SqlNotificationEventArgs e)
 		{
 			Console.WriteLine("Changes detected");
-			isChanged = true;
+			SqlDependency dependency = sender as SqlDependency;
+
+			dependency.OnChange -= DependencyOnOnChange;
+			//isChanged = true;
 		}
 	}
 }
