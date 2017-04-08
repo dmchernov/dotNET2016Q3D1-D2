@@ -3,15 +3,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using StringToDigit;
 
 namespace MultiString
 {
 	class Program
 	{
-		static void Main(string[] args)
+		static void Main()
 		{
 			while (true)
 			{
@@ -36,19 +34,20 @@ namespace MultiString
 		static void InputWithEmptyStrings()
 		{
 			Console.WriteLine("Введите несколько строк. Для окончании ввода наберите \"ok\"");
-			List<String> _strings = new List<string>();
+			List<String> strings = new List<string>();
 
 			while (true)
 			{
-				var s = Console.ReadLine().Trim();
-				if (s == "ok") break; else _strings.Add(s);
+				var s = Console.ReadLine()?.Trim();
+				if (s == "ok") break;
+			    strings.Add(s);
 			}
-			if(-_strings.Count > 0)
+			if(-strings.Count > 0)
 				Console.WriteLine("\nПервые символы введенных строк:");
 
 			try
 			{
-				foreach (var str in _strings)
+				foreach (var str in strings)
 				{
 					if (!String.IsNullOrEmpty(str))
 						Console.WriteLine(str[0]);

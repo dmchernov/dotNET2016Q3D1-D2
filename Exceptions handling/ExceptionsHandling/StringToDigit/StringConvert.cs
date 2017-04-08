@@ -2,10 +2,6 @@
 //Использовать стандартные методы int.Parse() и int.TryParse() запрещено. Предусмотрите корректную обработку ошибок.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StringToDigit
 {
@@ -25,10 +21,6 @@ namespace StringToDigit
 			catch (OverflowException ex)
 			{
 				throw new OverflowException($"Число {str} выходит за рамки диапазона Int32", ex);
-			}
-			catch
-			{
-				throw;
 			}
 			return result;
 		}
