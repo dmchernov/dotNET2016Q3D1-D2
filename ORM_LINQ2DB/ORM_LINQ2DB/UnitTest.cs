@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using LinqToDB;
 using LinqToDB.Data;
-using LinqToDB.DataProvider.Informix;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ORM_LINQ2DB.Models;
 

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using LinqToDB;
 using LinqToDB.Mapping;
 
 namespace ORM_LINQ2DB.Models
